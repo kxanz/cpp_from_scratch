@@ -38,7 +38,7 @@ cmake --build build
 ## Structure
  
 ```
-cpp-from-scratch/
+cpp_from_scratch/
 ├── Implementations/
 │   ├── CMakeLists.txt
 │   ├── include/       # Header implementations
