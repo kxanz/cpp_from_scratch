@@ -18,7 +18,15 @@ target_compile_options(mystl INTERFACE
 target_link_options(mystl INTERFACE
     $<$<CONFIG:Debug>:-fsanitize=address,undefined>)
 
+include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG        v3.9.1)
+FetchContent_MakeAvailable(Catch2)
+
 enable_testing()
 
 add_subdirectory(tests/uniqueptr_)
+add_subdirectory(tests/string_)
 # add_subdirectory(tests/vector)

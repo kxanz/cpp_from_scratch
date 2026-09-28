@@ -12,6 +12,7 @@ Each folder contains its own README with design notes, complexity analysis, and 
 |---|
 | [Hash Table](./Implementations/include/Hash) |
 | [Unique Pointer](./Implementations/include/UniquePtr) |
+| [String](./Implementations/include/String) |
 
  
 ## Problems
