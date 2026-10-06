@@ -93,41 +93,51 @@ namespace kxanz
         }
 
         // EC++ Item 3: const-correctness — these never modify observable state.
-        std::size_t size() const { return size_; }
+        std::size_t size() const 
+            { return size_; }
 
-        std::size_t length() const { return size_; }
+        std::size_t length() const 
+            { return size_; }
 
-        std::size_t capacity() const { return capacity_; }
+        std::size_t capacity() const 
+            { return capacity_; }
 
-        bool empty() const { return (size_ == 0) ? true : false; }
+        bool empty() const 
+            { return (size_ == 0) ? true : false; }
 
         // EC++ Item 3, 28: const/non-const overload pair; a non-const reference
         // out is a "handle" to internals, but it's operator[]'s documented
         // contract, not an accidental leak.
         // EC++ Item 18: match std::string's convention — operator[] is UB
         // out-of-range, at() throws std::out_of_range. Keep that distinction.
-        char& operator[](std::size_t index) { return data_[index]; }
+        char& operator[](std::size_t index) 
+            { return data_[index]; }
 
-        const char& operator[](std::size_t index) const { return data_[index]; }
+        const char& operator[](std::size_t index) const 
+            { return data_[index]; }
 
         char& at(std::size_t index)
         {
-            if (index >= size_) {
+            if (index >= size_) 
+            {
                 throw std::out_of_range("Kxanz::string::at: index out of range");
             }
             return data_[index];
         }
 
-        const char& at(std::size_t index) const { return data_[index]; }
+        const char& at(std::size_t index) const 
+            { return data_[index]; }
 
         // EC++ Item 28: c_str()/data() intentionally expose the internal buffer —
         // document why that's an acceptable exception, unlike operator[]'s
         // internals being handed out incidentally elsewhere.
         // Practical: the buffer must be null-terminated at data_[size_] for this
         // to be safe to hand to C APIs.
-        const char* c_str() const { return data_; }
+        const char* c_str() const 
+            { return data_; }
 
-        const char* data() const { return data_; }
+        const char* data() const 
+            { return data_; }
 
         // EC++ Item 5, 12: modifies *this in place; copy the bytes, not just a pointer.
         // EC++ Item 16: if you must grow, allocate the new buffer with new[],
@@ -160,9 +170,7 @@ namespace kxanz
         }
 
         string& operator+=(const string& other)
-        {
-            return append(other);
-        }
+            { return append(other); }
 
         void clear()
         {
@@ -189,7 +197,8 @@ namespace kxanz
     };
 
     // EC++ Item 25: non-member swap so std::swap-style code and ADL find it.
-    inline void swap(string& lhs, string& rhs) noexcept { lhs.swap(rhs); }
+    inline void swap(string& lhs, string& rhs) noexcept 
+        { lhs.swap(rhs); }
 
     // EC++ Item 21, 24: non-member so implicit conversions (e.g. from const
     // char*) apply symmetrically to both operands; return a new object by
@@ -199,7 +208,10 @@ namespace kxanz
     // (`operator+(string lhs, ...)`) and return it after `lhs += rhs` — an
     // rvalue lhs is moved in for free, an lvalue is copied exactly once either way.
     inline string operator+(const string& lhs, const string& rhs)
-    {
+    { 
+        string result(lhs);
+        result.append(rhs);
+        return result;
     }
 
     // EC++ Item 20, 23: pass by reference-to-const; prefer non-member/non-friend.
