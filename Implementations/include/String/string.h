@@ -220,15 +220,19 @@ namespace kxanz
     // candidates cover != for you — worth trying once == works).
     inline bool operator==(const string& lhs, const string& rhs)
     {
+        if (lhs.size() != rhs.size()) return false;
+        return std::memcmp(lhs.c_str(), rhs.c_str(), lhs.size()) == 0;
     }
 
+
     inline bool operator!=(const string& lhs, const string& rhs)
-    {
-    }
+        {  return !(lhs == rhs); }
 
     // EC++ Item 20, 23: pass by reference-to-const; must be non-member since
     // the left-hand operand is std::ostream, not kxanz::string.
     inline std::ostream& operator<<(std::ostream& os, const string& s)
     {
+        os << s.c_str();
+        return os;
     }
 }
