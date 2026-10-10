@@ -58,7 +58,7 @@ TEST_CASE("kxanz::string basic functionality", "[string]")
         f = f;
         REQUIRE(f.size() == 8);
         REQUIRE(f[0] == 's');
-    }
+   }
 
     SECTION("Move assignment takes the source's buffer")
     {
