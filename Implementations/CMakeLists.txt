@@ -29,4 +29,4 @@ enable_testing()
 
 add_subdirectory(tests/uniqueptr_)
 add_subdirectory(tests/string_)
-# add_subdirectory(tests/vector)
+add_subdirectory(tests/vector_)
