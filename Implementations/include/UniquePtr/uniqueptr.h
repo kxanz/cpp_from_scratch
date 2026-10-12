@@ -4,75 +4,77 @@
 //   EC++  = Effective C++, 3rd ed. (Meyers)      — pre-C++11, design/RAII/assignment
 //   EMC++ = Effective Modern C++ (Meyers)         — C++11/14, move semantics, noexcept
 // "(covered)" = an item already used in string.h; "(new)" = first appearing here.
-
 #include <utility>
+
 namespace kxanz
 {
-    // EMC++ Item 18 (new) 
-    template <typename T>
-    struct underlying_ptr_deleter
+
+// EMC++ Item 18 (new) 
+template <typename T>
+struct underlying_ptr_deleter
+{
+    void operator()(T * underlying_ptr) const
+    { delete underlying_ptr; }
+};
+
+// EMC++ Item 18 (new)
+template <typename T, typename underlying_ptr_deleter = underlying_ptr_deleter<T>>
+class unique_ptr
+{
+public:
+    unique_ptr() = default;
+
+    explicit unique_ptr(T * pointer) : underlying_ptr (pointer) {}
+
+    unique_ptr(const unique_ptr&) = delete;
+
+    unique_ptr& operator=(const unique_ptr&) = delete; 
+
+    unique_ptr(unique_ptr&& other) noexcept : underlying_ptr(other.underlying_ptr) 
+        { other.underlying_ptr = nullptr; }
+
+    unique_ptr& operator=(unique_ptr&& other) noexcept
     {
-        void operator()(T * underlying_ptr) const
-        { delete underlying_ptr; }
-    };
+        T * incoming { std::exchange(other.underlying_ptr, nullptr) };
+        T * oldPtr { std::exchange(underlying_ptr, incoming) };
+        underlying_ptr_deleter()(oldPtr);
+        return *this;
+    }
 
-    // EMC++ Item 18 (new)
-    template <typename T, typename underlying_ptr_deleter = underlying_ptr_deleter<T>>
-    class unique_ptr
+    ~unique_ptr()
+        { underlying_ptr_deleter()(underlying_ptr); }
+
+    T* release() noexcept 
     {
-    public:
-        unique_ptr() = default;
+        T * old = underlying_ptr;
+        underlying_ptr = nullptr;
+        return old;
+    }
 
-        explicit unique_ptr(T * pointer) : underlying_ptr (pointer) {}
+    void reset(T* pointer = nullptr) noexcept
+    {
+        T * old = underlying_ptr;
+        underlying_ptr = pointer;
+        underlying_ptr_deleter()(old);
+    }
 
-        unique_ptr(const unique_ptr&) = delete;
-
-        unique_ptr& operator=(const unique_ptr&) = delete; 
-
-        unique_ptr(unique_ptr&& other) noexcept : underlying_ptr(other.underlying_ptr) 
-            { other.underlying_ptr = nullptr; }
-
-        unique_ptr& operator=(unique_ptr&& other) noexcept
-        {
-            T * incoming { std::exchange(other.underlying_ptr, nullptr) };
-            T * oldPtr { std::exchange(underlying_ptr, incoming) };
-            underlying_ptr_deleter()(oldPtr);
-            return *this;
-        }
-
-        ~unique_ptr()
-            { underlying_ptr_deleter()(underlying_ptr); }
-
-        T* release() noexcept 
-        {
-            T * old = underlying_ptr;
-            underlying_ptr = nullptr;
-            return old;
-        }
-
-        void reset(T* pointer = nullptr) noexcept
-        {
-            T * old = underlying_ptr;
-            underlying_ptr = pointer;
-            underlying_ptr_deleter()(old);
-        }
-
-        bool is_owning() const noexcept
-            { return underlying_ptr != nullptr; }
+    bool is_owning() const noexcept
+        { return underlying_ptr != nullptr; }
 
 
-        T& operator*() const noexcept 
-            { return *underlying_ptr; }
-        T* operator->() const noexcept 
-            { return underlying_ptr; }
+    T& operator*() const noexcept 
+        { return *underlying_ptr; }
 
-        explicit operator bool() const noexcept 
-            { return is_owning(); }
+    T* operator->() const noexcept 
+        { return underlying_ptr; }
 
-        // EC++ Item 15 (new)
-    private:
-        T * underlying_ptr { nullptr };
-    };
+    explicit operator bool() const noexcept 
+        { return is_owning(); }
+
+    // EC++ Item 15 (new)
+private:
+    T * underlying_ptr { nullptr };
+};
 }
 
 // Book item references (moved here from the members above):
