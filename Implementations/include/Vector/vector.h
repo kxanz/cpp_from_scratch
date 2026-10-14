@@ -8,7 +8,7 @@
 // "(covered)" = an item already used in string.h / uniqueptr.h; "(new)" = first appearing here.
 
 // Write your solution here
-// C++26 using GCC 16.2
+//C++26 using GCC 16.2
 // Debug with std::cerr or std::clog.
 // !!! IMPORTANT !!!
 // 99% of headers are pre-compiled for you server-side.
