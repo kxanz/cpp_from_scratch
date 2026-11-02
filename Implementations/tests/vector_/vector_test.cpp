@@ -49,6 +49,16 @@ struct NoDefault
     int value;
 };
 
+template <typename T>
+void print(kxanz::vector<T>& vec)
+{
+    for (auto it = vec.begin(); it != vec.end(); ++it)
+    {
+        std::cout << *it << ' ';
+    }
+    std::cout << '\n';
+}
+
 TEST(VectorTest, DefaultConstructorTest)
 {
     kxanz::vector<int> v;
@@ -58,9 +68,11 @@ TEST(VectorTest, DefaultConstructorTest)
 
 TEST(VectorTest, IntializerListTest)
 {
+    kxanz::vector<int> listNum {1, 2, 3, 4, 5};
 
+    print(listNum);
 }
-
+/*
 TEST(VectorTest, DestructorTest)
 {   
 }
@@ -76,17 +88,22 @@ TEST(VectorTest, MoveAssignmentTest)
 TEST(VectorTest, GetSizeTest)
 {
 }
-
+*/
 TEST(VectorTest, GetCapacityTest)
 {
-    kxanz::vector<int> v;
+    kxanz::vector<int> v {1,2,3};
     std::cout << v.get_capacity() << '\n';
 }
 
 TEST(VectorTest, PushBackTest)
 {
+    kxanz::vector<int> vec { 1, 2, 3, 4, 5, };
+    
+    auto i { 2 };
+    vec.push_back(i);
+    print(vec);
 }
-
+/*
 TEST(VectorTest, AtTest)
 {
 }
@@ -110,3 +127,4 @@ TEST(VectorTest, ShrinkToFitTest)
 TEST(VectorTest, SizeofTest)
 {
 }
+*/

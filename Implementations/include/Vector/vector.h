@@ -50,7 +50,6 @@ public:
     */
     vector() : vector(1) {};
 
-
     /**
      * @param capacity reserve space on the vecotr
      */
@@ -66,13 +65,16 @@ public:
     {
         fill_construct(init);
     }
+    
+    /**
+     * @brief allocating for vector<T> v { 1 2 3 4 }
+     */
+    vector(std::initializer_list<T> initList) { allocate_data_list(initList); }
 
-    vector(std::initializer_list<T> init)
-    { 
-        
-    }
-
-    vector& operator=(std::initializer_list<T> init);
+    /**
+     * @brief allocating for vector<T> v = { 1 2 3 4 }
+     */
+    vector& operator=(std::initializer_list<T> initList) { allocate_data_list(initList); }
 
     //Copy Constructor
     /**
@@ -82,10 +84,16 @@ public:
 
     vector& operator=(const vector& other) = delete;
 
+    /**
+     * Moving Constructor
+     */
     vector(vector&& other) noexcept;
 
     vector& operator=(vector&& other) noexcept;
 
+    /**
+     * @brief the deconst pop_back until the vector is clear.
+     */
     ~vector() 
     {
         clear();
@@ -93,9 +101,17 @@ public:
         allocator.deallocate(data_, capacity_);
     }    
 
-    void push_back(T data)
+    /**
+     * @brief end of size, increase capacity_ and size_ and add a new element
+     * @param element allocate a space of memmory then insert element
+     */
+    void push_back(T init)
     {
-
+        if (size_ == capacity_)
+        {
+            try_expand_capacity();
+        }
+        new (data_ + size_++) T{init};
     }
     
     /**
@@ -119,10 +135,14 @@ public:
 
     void shrink_to_fit()
     {
+
     }
 
     void pop_back()
     {
+        if (size_ == 0) return;
+        --size_;
+        std::destroy_at(data_ + size_);
     }
     
     [[nodiscard]] bool empty() const noexcept { return (size_ == 0) ? true : false; }
@@ -162,19 +182,45 @@ private:
         capacity_ = new_capacity;
     }
 
-    void allocate_data(const std::initializer_list<T>& init)
+    /**
+     * @brief vector<int> { 1 2 3 }; allocate elements to vector;
+     * @param init 
+     */
+    void allocate_data_list(const std::initializer_list<T>& initList)
     {
-        reserve(init); 
-
-        for (auto it = init.begin(); it != init.end(); it++)
+        reserve(initList.size()); 
+        
+        for (auto it = initList.begin(); it != initList.end(); ++it)
         {
-             
+            new(data_ + size_) T(*it);
+            ++size_;
         }
     }
 
-    
+    void try_expand_capacity()
+    {
+        T* old_data = data_;
+        std::size_t old_capacity = capacity_;
+        
+        capacity_ = (capacity_ == 0) ?  1 : capacity_* 2;
+
+        Allocator allocator;
+        data_ = allocator.allocate(capacity_);
+
+        for (std::size_t i {0}; i < size_; ++i)
+        {
+           new (data_ + i) T(std::move(old_data[i])); 
+           std::destroy_at(old_data + i);
+        } 
+        allocator.deallocate(old_data, old_capacity);
+    }
 
 private:
+    /**
+     * @param data_ beginning of a single memory allocation that holds vector contents
+     * @param size_ end of the vector
+     * @param capacity_ holds data_ - size_ 
+     */
     T * data_ { nullptr };
     size_type size_ {};
     size_type capacity_ {};
