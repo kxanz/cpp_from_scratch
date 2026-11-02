@@ -259,6 +259,7 @@ private:
             clear();
             allocator.deallocate(data_, capacity_);
         }
+
         data_ = memory;
         size_ = other.size_;
         capacity_ = other.capacity_;
