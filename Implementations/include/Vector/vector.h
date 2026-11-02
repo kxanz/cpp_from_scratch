@@ -7,6 +7,7 @@
 #include <memory>
 #include <new>
 #include <stdexcept>
+#include <utility>
 
 // Write your solution here
 //C++26 using GCC 16.2
@@ -76,20 +77,41 @@ public:
      */
     vector& operator=(std::initializer_list<T> initList) { allocate_data_list(initList); }
 
-    //Copy Constructor
-    /**
-    *   
+    /** Copy Constructor
+    * @brief 
     */
-    explicit vector(const vector& other) = delete;
+    vector(const vector& other) { copy_from(other); }
 
-    vector& operator=(const vector& other) = delete;
-
-    /**
-     * Moving Constructor
+    /** Copy Assignment 
+     * @brief 
      */
-    vector(vector&& other) noexcept;
+    vector& operator=(const vector& other) 
+    {
+        if (this == &other)
+        {
+            return * this;
+        }
+        copy_from(other);
+        return * this;
+    }
 
-    vector& operator=(vector&& other) noexcept;
+    /** Move Constructor
+     * @param other
+     */
+    vector(vector&& other) noexcept { steal_from(std::move(other)); }
+
+    /** Move Assignment
+     * @param other
+     */
+    vector& operator=(vector&& other) noexcept
+    {
+        if (this == &other) return * this;
+        clear();
+        Allocator allocator;
+        allocator.deallocate(data_, capacity_);
+        steal_from(std::move(other));
+        return * this;
+    }
 
     /**
      * @brief the deconst pop_back until the vector is clear.
@@ -135,7 +157,10 @@ public:
 
     void shrink_to_fit()
     {
-
+        if (capacity_ != size_)
+        {
+            reallocate(size_);
+        }
     }
 
     void pop_back()
@@ -197,15 +222,14 @@ private:
         }
     }
 
-    void try_expand_capacity()
+    void reallocate(size_type new_capacity)
     {
         T* old_data = data_;
         std::size_t old_capacity = capacity_;
         
-        capacity_ = (capacity_ == 0) ?  1 : capacity_* 2;
-
         Allocator allocator;
-        data_ = allocator.allocate(capacity_);
+        data_ = allocator.allocate(new_capacity);
+        capacity_ = new_capacity;
 
         for (std::size_t i {0}; i < size_; ++i)
         {
@@ -214,6 +238,40 @@ private:
         } 
         allocator.deallocate(old_data, old_capacity);
     }
+
+    void try_expand_capacity() 
+    {
+        reallocate((capacity_ == 0) ? 1 : capacity_ * 2);
+    }
+
+    void copy_from(const vector& other)
+    {
+        Allocator allocator; 
+        T* memory = allocator.allocate(other.capacity_);
+
+        for (auto i {0}; i < other.size_; ++i)
+        {
+            new (memory + i) T {other.data_[i]}; 
+        }
+
+        if (data_ != nullptr)
+        {
+            clear();
+            allocator.deallocate(data_, capacity_);
+        }
+        data_ = memory;
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+    }
+
+    void steal_from(vector&& other) 
+    {
+        data_ = std::exchange(other.data_, nullptr);
+        size_ = std::exchange(other.size_, 0);
+        capacity_ = std::exchange(other.capacity_, 0);
+    }
+
+
 
 private:
     /**
