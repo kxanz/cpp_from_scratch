@@ -20,6 +20,7 @@ The class follows the Rule of Five. Copies are deep: the copy constructor and co
 | `explicit vector(size_t capacity)` | Empty vector with room for `capacity` elements |
 | `vector(n, value)` | `n` copies of `value` |
 | `vector{a, b, c}` | Build from an initializer list |
+| `v = {a, b, c}` | Replace the contents with a list; builds a temporary and reuses move assignment for the cleanup |
 | Copy constructor / copy assignment | Deep copy into a new block; self-assignment safe |
 | Move constructor / move assignment | Steal the source's block and leave it empty; `noexcept`, self-move safe |
 | `~vector()` | Destroy every element, then free the block |
@@ -46,5 +47,3 @@ Tests are written with GoogleTest (fetched automatically via CMake's `FetchConte
 Educational implementation for practicing raw memory management, placement `new`, object lifetime, amortized growth, the Rule of Five, and move semantics.
 
 Not yet implemented: `operator[]`, a non-const `at`, a public `reserve`, `const` iterators (`begin() const` / `cbegin`), postfix `++` on the iterator, and `emplace_back`. Growth always moves elements rather than using `std::move_if_noexcept`, and the allocator is default-constructed on each use rather than stored.
-
-Known issues: `operator=(std::initializer_list<T>)` is missing its `return *this` and does not free the existing block first, so it should not be used yet.

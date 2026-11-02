@@ -75,7 +75,12 @@ public:
     /**
      * @brief allocating for vector<T> v = { 1 2 3 4 }
      */
-    vector& operator=(std::initializer_list<T> initList) { allocate_data_list(initList); }
+    vector& operator=(std::initializer_list<T> initList) 
+    { 
+       * this = vector(initList);
+       return * this;
+    }
+
 
     /** Copy Constructor
     * @brief 
@@ -249,7 +254,7 @@ private:
         Allocator allocator; 
         T* memory = allocator.allocate(other.capacity_);
 
-        for (auto i {0}; i < other.size_; ++i)
+        for (size_type i {0}; i < other.size_; ++i)
         {
             new (memory + i) T {other.data_[i]}; 
         }
