@@ -147,12 +147,12 @@ public:
     
     [[nodiscard]] bool empty() const noexcept { return (size_ == 0) ? true : false; }
 
-    void clear() { while (size_) { pop_back(); } }
+    void clear() noexcept { while (size_) { pop_back(); } }
 
     //void clear() const noexcept { while(size_) pop_back(); }
 
-    Iterator begin() { return Iterator(data_); }
-    Iterator end() { return Iterator(data_ + size_); }
+    Iterator begin() noexcept { return Iterator(data_); }
+    Iterator end() noexcept { return Iterator(data_ + size_); }
 
 private:
     /**
