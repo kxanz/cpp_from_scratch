@@ -25,6 +25,12 @@ Each folder contains its own README with design notes, complexity analysis, and 
 | [Base and Bounds](./Problems/Operating_Systems/Base_and_Bounds) |
 | [Adress Translation1](./Problems/Operating_Systems/Adress_Translation1) |
 
+### Memory and Pointers
+
+| Problem |
+|---|
+| [3D Space](./Problems/Memory_and_Pointers/3D_Space) |
+
 ---
  
 ## Building
