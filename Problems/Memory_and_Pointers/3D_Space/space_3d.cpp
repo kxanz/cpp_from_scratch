@@ -1,12 +1,63 @@
 #include <cstddef>
-
+#include <limits>
+#include <algorithm>
+#include <iostream>
+#include <new>
 int*** GetSpace(size_t x, size_t y, size_t z) {
-    // Implement
-    return nullptr;
+    if (!x || !y || !z) 
+    {
+        return nullptr;
+    }
+
+    int*** space = new int**[z];
+
+    for (size_t i{}; i < z; ++i) 
+    {
+        auto** yAxis = space[i] = new int*[y];
+
+        for (size_t j{}; j < y; ++j) 
+        {
+            auto* xAxis = yAxis[j] = new int[x];
+            std::fill_n(xAxis, x, std::numeric_limits<int>::min());
+        }
+    }
+
+    return space;
 }
 
 int main()
 {
+    size_t x {4}, y {5}, z {6};
+    int*** space = GetSpace(x, y, z);
+
+    if (space)
+    {
+        std::cout << "space[0][0][0] = " << space[0][0][0] << '\n';
+        std::cout << "space[" << z - 1 << "][" << y - 1 << "][" << x - 1 << "] = "
+                  << space[z - 1][y - 1][x - 1] << '\n';
+
+        for (size_t i{}; i < z; ++i)
+        {
+            for (size_t j{}; j < y; ++j)
+            {
+                delete[] space[i][j];
+            }
+            delete[] space[i];
+        }
+        delete[] space;
+    }
+
+    std::cout << "GetSpace(0, 5, 6) returns " << (GetSpace(0, 5, 6) ? "a space" : "nullptr") << '\n';
+
+    try
+    {
+        int*** huge = GetSpace(std::numeric_limits<size_t>::max(), 2, 2);
+        std::cout << "huge input returns " << (huge ? "a space" : "nullptr") << '\n';
+    }
+    catch (const std::bad_alloc& e)
+    {
+        std::cout << "huge input threw " << e.what() << '\n';
+    }
 }
 
 // Comment key:

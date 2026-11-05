@@ -37,5 +37,7 @@ int*** space = GetSpace(4, 5, 6);
 ## Build & Run
 
 ```bash
-run space_3d
+clang++ -std=c++20 -Wall -Wextra space_3d.cpp -o space_3d && ./space_3d
 ```
+
+`main` also tries a huge input. Under AddressSanitizer that allocation aborts the program with an "out-of-memory" report instead of throwing `std::bad_alloc`, so build without `-fsanitize` to see the normal behavior.
