@@ -14,6 +14,15 @@ Each folder contains its own README with design notes, complexity analysis, and 
 | [Unique Pointer](./Implementations/include/UniquePtr) |
 | [String](./Implementations/include/String) |
 | [Vector](./Implementations/include/Vector) |
+| [Allocator](./Implementations/include/Allocator) (in progress) |
+
+## Concurrency
+
+| Implementation |
+|---|
+| [SPSC Queue](./Implementations/include/Concurrency/SPSCQueue) (in progress) |
+
+See the [concurrency roadmap](./Implementations/include/Concurrency) for what's next.
 
  
 ## Problems
@@ -50,6 +59,7 @@ cpp_from_scratch/
 ├── Implementations/
 │   ├── CMakeLists.txt
 │   ├── include/       # Header implementations
+│   │   └── Concurrency/   # Threads, locks, and concurrent data structures
 │   └── tests/         # Tests per component
 └── Problems/          # Coding problems
 ```
