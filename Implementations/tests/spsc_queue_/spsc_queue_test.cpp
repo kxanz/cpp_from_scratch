@@ -1,4 +1,4 @@
-#include "Concurrency/SPSCQueue/spsc_queue.h"
+#include "SPSCQueue/spsc_queue.h"
 #include <gtest/gtest.h>
 #include <atomic>
 #include <chrono>
