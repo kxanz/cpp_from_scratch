@@ -14,7 +14,7 @@ Each folder contains its own README with design notes, complexity analysis, and 
 | [Unique Pointer](./Implementations/include/UniquePtr) |
 | [String](./Implementations/include/String) |
 | [Vector](./Implementations/include/Vector) |
-| [Allocator](./Implementations/include/Allocator) (in progress) |
+| [Allocator](./Implementations/include/Allocator) |
 
 ## Concurrency
 
